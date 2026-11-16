@@ -1,0 +1,564 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Kalender OSIS SMKN 3 Bantaeng</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Layout: meja kalender 3D. Lembar bulan di kiri (balok tanggal yang timbul), agenda dan detail hari di kanan, kartu program kerja yang bisa dibalik di bawah. */
+:root{
+  --bg:#E3EDF9; --bg-glow:#C9DEF6; --surface:#FFFFFF; --surface-2:#EDF3FB; --ink:#0B2A4A; --muted:#44586F; --line:#C3D2E5;
+  --edge:#8FA9C6; --edge-dk:#5E7A9C; --shadow:rgba(10,37,64,.22); --brand:#1D5FA8; --brand-dk:#0B3A6B; --ring:#0B2A4A; --focus:#F28C28;
+  --fri-top:#F4FCF5; --fri-bot:#DDF2E0; --fri-ink:#1E7A38; --fri-edge:#7FBF8B;
+  --sat-top:#F6F8FB; --sat-bot:#E6ECF3; --sat-ink:#44546A; --sat-edge:#9AA9BB;
+  --sun-top:#FFF4F3; --sun-bot:#FBDCD9; --sun-ink:#C0332B; --sun-edge:#D49A95;
+  --out:#DCE7F3; --out-ink:#8CA0B8;
+  --piket:#2F7FE0; --gsm:#2FA84F; --dhuhur:#17A2A2;
+  --font-d:'Space Grotesk',system-ui,sans-serif; --font-b:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A1626; --bg-glow:#123150; --surface:#13273F; --surface-2:#0F2036; --ink:#E6F0FB; --muted:#9FB4CC; --line:#27425F;
+    --edge:#06101D; --edge-dk:#030811; --shadow:rgba(0,0,0,.55); --brand:#5AA2F0; --brand-dk:#2A6DB8; --ring:#E6F0FB;
+    --fri-top:#18402F; --fri-bot:#12331F; --fri-ink:#7BE095; --fri-edge:#08170F;
+    --sat-top:#1B3350; --sat-bot:#162A42; --sat-ink:#A9BDD4; --sat-edge:#06101D;
+    --sun-top:#40263A; --sun-bot:#321D2C; --sun-ink:#FF9C94; --sun-edge:#12080F;
+    --out:#0F2036; --out-ink:#4F6785;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A1626; --bg-glow:#123150; --surface:#13273F; --surface-2:#0F2036; --ink:#E6F0FB; --muted:#9FB4CC; --line:#27425F;
+  --edge:#06101D; --edge-dk:#030811; --shadow:rgba(0,0,0,.55); --brand:#5AA2F0; --brand-dk:#2A6DB8; --ring:#E6F0FB;
+  --fri-top:#18402F; --fri-bot:#12331F; --fri-ink:#7BE095; --fri-edge:#08170F;
+  --sat-top:#1B3350; --sat-bot:#162A42; --sat-ink:#A9BDD4; --sat-edge:#06101D;
+  --sun-top:#40263A; --sun-bot:#321D2C; --sun-ink:#FF9C94; --sun-edge:#12080F;
+  --out:#0F2036; --out-ink:#4F6785;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:radial-gradient(900px 500px at 90% -10%,var(--bg-glow),transparent 70%),radial-gradient(700px 420px at -10% 100%,var(--bg-glow),transparent 70%),var(--bg);
+  color:var(--ink);font:400 15px/1.5 var(--font-b);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px;
+}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.page{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:22px}
+h1,h2,h3{font-family:var(--font-d);margin:0;text-wrap:balance}
+
+/* header */
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:end}
+.eyebrow{font:600 12px/1 var(--font-b);letter-spacing:.14em;text-transform:uppercase;color:var(--brand)}
+h1{font-size:clamp(30px,5.4vw,54px);line-height:1.02;margin-top:10px;
+  text-shadow:1px 1px 0 var(--edge),2px 2px 0 var(--edge),3px 3px 0 var(--edge),4px 4px 0 var(--edge-dk),6px 8px 14px var(--shadow)}
+.sub{margin:12px 0 0;color:var(--muted);max-width:56ch}
+.next{display:flex;gap:14px;align-items:center;text-align:left;border:0;padding:14px 18px;border-radius:16px;min-width:0;max-width:340px;
+  background:linear-gradient(180deg,var(--surface),var(--surface-2));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),1px 1px 0 var(--edge),2px 2px 0 var(--edge),3px 3px 0 var(--edge),4px 4px 0 var(--edge),5px 5px 0 var(--edge),8px 14px 18px var(--shadow);
+  transition:transform .15s}
+.next:hover{transform:translate(-1px,-2px)}
+.next .cube{width:38px;height:38px;border-radius:10px;flex:none;background:linear-gradient(135deg,color-mix(in srgb,var(--c),#fff 35%),var(--c));box-shadow:2px 2px 0 color-mix(in srgb,var(--c),#000 40%),3px 3px 0 color-mix(in srgb,var(--c),#000 40%)}
+.next small{display:block;color:var(--muted);font-size:12px}
+.next b{font:700 16px/1.25 var(--font-d);display:block}
+
+/* month tabs */
+.months{display:flex;gap:12px;overflow-x:auto;padding:6px 8px 14px 4px;scroll-snap-type:x proximity;scrollbar-width:thin}
+.tab{flex:none;scroll-snap-align:center;border:0;border-radius:12px;padding:8px 14px 9px;min-width:74px;text-align:center;
+  background:linear-gradient(180deg,var(--surface),var(--surface-2));color:var(--ink);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),1px 1px 0 var(--edge),2px 2px 0 var(--edge),3px 3px 0 var(--edge),4px 4px 0 var(--edge),6px 10px 12px var(--shadow);transition:transform .15s,box-shadow .15s}
+.tab:hover{transform:translate(-1px,-2px)}
+.tab b{display:block;font:700 15px/1.1 var(--font-d)}
+.tab span{display:block;font-size:11px;color:var(--muted);margin-top:2px}
+.tab i{display:flex;justify-content:center;gap:3px;margin-top:5px;height:6px}
+.tab i s{width:6px;height:6px;border-radius:50%;background:var(--c);display:block}
+.tab[aria-current="true"]{transform:translate(3px,3px);background:linear-gradient(180deg,var(--brand),var(--brand-dk));color:#fff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),1px 1px 0 var(--edge),2px 2px 0 var(--edge),3px 6px 8px var(--shadow)}
+.tab[aria-current="true"] span{color:#D6E7FA}
+
+/* stage */
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:30px;align-items:start}
+.sheet{position:relative;perspective:1700px;border-radius:22px;padding:46px 22px 26px;margin-top:14px;
+  background:linear-gradient(180deg,var(--surface),var(--surface-2));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),1px 1px 0 var(--edge),2px 2px 0 var(--edge),3px 3px 0 var(--edge),4px 4px 0 var(--edge),5px 5px 0 var(--edge),6px 6px 0 var(--edge),7px 7px 0 var(--edge),8px 8px 0 var(--edge-dk),9px 9px 0 var(--edge-dk),12px 22px 30px var(--shadow)}
+.rings{position:absolute;top:-14px;left:0;right:0;display:flex;justify-content:space-evenly;padding:0 26px;pointer-events:none}
+.rings i{width:10px;height:38px;border-radius:6px;background:linear-gradient(90deg,#F4F7FB,#7D8DA2 55%,#4A586B);box-shadow:2px 3px 3px var(--shadow)}
+.shead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.mtitle{flex:1 1 220px;min-width:0}
+.mtitle h2{font-size:clamp(30px,5vw,48px);line-height:1;
+  text-shadow:1px 1px 0 var(--edge),2px 2px 0 var(--edge),3px 3px 0 var(--edge),4px 4px 0 var(--edge-dk),5px 7px 10px var(--shadow)}
+.mtitle h2 em{font-style:normal;color:var(--brand)}
+.mtitle p{margin:8px 0 0;color:var(--muted);font-size:13px}
+.btn{border:0;border-radius:12px;padding:9px 14px;font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:6px;
+  background:linear-gradient(180deg,var(--surface),var(--surface-2));color:var(--ink);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),1px 1px 0 var(--edge),2px 2px 0 var(--edge),3px 3px 0 var(--edge),4px 4px 0 var(--edge),5px 9px 10px var(--shadow);transition:transform .12s,box-shadow .12s}
+.btn:hover{transform:translate(-1px,-1px)}
+.btn:active{transform:translate(3px,3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),1px 1px 0 var(--edge),2px 3px 4px var(--shadow)}
+.btn.pri{background:linear-gradient(180deg,var(--brand),var(--brand-dk));color:#fff}
+.btn[disabled]{opacity:.4;pointer-events:none}
+.nav{display:flex;gap:10px;flex-wrap:wrap}
+.wdh,.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px}
+.wdh{margin-bottom:12px}
+.wdh span{border-radius:8px;padding:6px 0;text-align:center;font:700 11px/1 var(--font-b);letter-spacing:.08em;color:#fff;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--w),#fff 22%),var(--w));box-shadow:1px 1px 0 color-mix(in srgb,var(--w),#000 45%),2px 2px 0 color-mix(in srgb,var(--w),#000 45%),3px 3px 0 color-mix(in srgb,var(--w),#000 45%)}
+.grid{transform-origin:50% 0}
+.grid.turn{animation:flipIn .55s cubic-bezier(.2,.75,.25,1)}
+@keyframes flipIn{from{transform:rotateX(-58deg);opacity:.15}to{transform:none;opacity:1}}
+
+.day{--ce:var(--edge);position:relative;aspect-ratio:1/.96;min-width:0;border:0;border-radius:12px;padding:8px;text-align:left;overflow:hidden;
+  color:var(--cell-ink,var(--ink));background:linear-gradient(180deg,var(--cell-top,var(--surface)),var(--cell-bot,var(--surface-2)));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),1px 1px 0 var(--ce),2px 2px 0 var(--ce),3px 3px 0 var(--ce),4px 4px 0 var(--ce),5px 5px 0 var(--ce),6px 12px 16px var(--shadow);
+  transition:transform .14s,box-shadow .14s}
+.day.out{background:var(--out);color:var(--out-ink);box-shadow:none;cursor:default}
+.day.out .num{font-weight:500}
+.day.wd4{--cell-top:var(--fri-top);--cell-bot:var(--fri-bot);--cell-ink:var(--fri-ink);--ce:var(--fri-edge)}
+.day.wd5{--cell-top:var(--sat-top);--cell-bot:var(--sat-bot);--cell-ink:var(--sat-ink);--ce:var(--sat-edge)}
+.day.wd6{--cell-top:var(--sun-top);--cell-bot:var(--sun-bot);--cell-ink:var(--sun-ink);--ce:var(--sun-edge)}
+.day.ev{--cell-top:color-mix(in srgb,var(--c),#fff 30%);--cell-bot:var(--c);--cell-ink:var(--on);--ce:color-mix(in srgb,var(--c),#000 42%)}
+.day:not(.out):hover{transform:translate(-1px,-2px)}
+.day[aria-pressed="true"]{transform:translate(4px,4px);box-shadow:0 0 0 3px var(--ring),1px 1px 0 var(--ce),2px 2px 0 var(--ce),3px 6px 8px var(--shadow);z-index:1}
+.num{font:700 15px/1 var(--font-d);display:inline-block}
+.day.today .num{background:var(--ink);color:var(--surface);border-radius:999px;padding:3px 7px;margin:-3px 0 0 -4px}
+.dots{position:absolute;top:9px;right:8px;display:flex;gap:4px}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none;
+  background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--k),#fff 62%),var(--k) 55%,color-mix(in srgb,var(--k),#000 40%))}
+.lab{position:absolute;left:5px;right:5px;bottom:8px;text-align:center;font:700 10.5px/1.15 var(--font-b);letter-spacing:.04em;text-transform:uppercase;word-break:break-word}
+.lab.gs{font-size:8px;color:var(--fri-ink);letter-spacing:.06em;bottom:7px}
+.day.ram .lab.gs{bottom:15px}
+.ramb{position:absolute;left:6px;right:6px;bottom:5px;height:6px;border-radius:3px;background:linear-gradient(180deg,#F49BC4,#E85D9C);box-shadow:0 1px 0 rgba(0,0,0,.25)}
+
+/* side */
+.side{display:grid;gap:22px;margin-top:14px}
+.panel{border-radius:16px;padding:16px;background:linear-gradient(180deg,var(--surface),var(--surface-2));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),1px 1px 0 var(--edge),2px 2px 0 var(--edge),3px 3px 0 var(--edge),4px 4px 0 var(--edge),5px 5px 0 var(--edge),8px 16px 20px var(--shadow)}
+.panel h3{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--brand);margin-bottom:12px;font-family:var(--font-b);font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px 5px 8px;font-size:12.5px;font-weight:500;display:inline-flex;align-items:center;gap:7px;color:var(--ink)}
+.chip[aria-pressed="false"]{opacity:.5;text-decoration:line-through}
+.chip .dot{--k:var(--c)}
+.chipgrp{font-size:11.5px;color:var(--muted);margin:12px 0 7px}
+.chipgrp:first-of-type{margin-top:0}
+.ag{display:flex;gap:10px;width:100%;text-align:left;border:0;background:transparent;padding:9px 4px;border-radius:10px;color:var(--ink)}
+.ag:hover{background:var(--surface-2)}
+.ag+.ag{border-top:1px solid var(--line)}
+.bar{width:6px;border-radius:3px;background:var(--c);flex:none;align-self:stretch}
+.ag b,.di b{display:block;font-size:14px;line-height:1.3}
+.ag small,.di small{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;margin-top:2px}
+.empty{color:var(--muted);font-size:13.5px;margin:0}
+.dl{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.di{display:flex;gap:10px;align-items:flex-start}
+.di .sw{width:11px;height:11px;border-radius:50%;margin-top:4px;flex:none;
+  background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--c),#fff 62%),var(--c) 55%,color-mix(in srgb,var(--c),#000 40%))}
+.dtitle{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.dtitle h3{margin:0}
+.tag{font-size:11px;font-weight:700;border-radius:999px;padding:2px 8px;background:var(--ink);color:var(--surface)}
+.note{font-size:12.5px;color:var(--muted);margin:12px 0 0;display:flex;gap:8px}
+.note .dot{margin-top:5px}
+
+/* programs */
+.programs h2{font-size:clamp(24px,3.4vw,34px)}
+.programs>p{color:var(--muted);margin:8px 0 22px;max-width:60ch}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:24px}
+.flip{perspective:1000px;height:186px}
+.flip-in{position:relative;height:100%;transition:transform .6s cubic-bezier(.3,.7,.2,1);transform-style:preserve-3d}
+.flip.open .flip-in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:16px;backface-visibility:hidden;-webkit-backface-visibility:hidden;text-align:left;border:0;padding:0;overflow:hidden;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),1px 1px 0 var(--ce),2px 2px 0 var(--ce),3px 3px 0 var(--ce),4px 4px 0 var(--ce),5px 5px 0 var(--ce),6px 6px 0 var(--ce),8px 16px 18px var(--shadow);
+  --ce:color-mix(in srgb,var(--c),#000 45%)}
+.front{display:flex;flex-direction:column;justify-content:space-between;padding:16px;color:var(--on,#fff);background:linear-gradient(160deg,color-mix(in srgb,var(--c),#fff 28%),var(--c))}
+.front .badge{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:700 15px var(--font-d);color:color-mix(in srgb,var(--c),#000 40%);
+  background:radial-gradient(circle at 35% 30%,#fff,color-mix(in srgb,var(--c),#fff 70%) 60%,color-mix(in srgb,var(--c),#fff 20%))}
+.front b{display:block;font:700 17px/1.2 var(--font-d)}
+.front span.w{display:block;font-size:12.5px;margin-top:6px;opacity:.95}
+.front .hint{font-size:11.5px;opacity:.85;letter-spacing:.03em}
+.back{transform:rotateY(180deg);padding:16px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;background:linear-gradient(180deg,var(--surface),var(--surface-2));color:var(--ink)}
+.back p{margin:0;font-size:13px;line-height:1.45}
+.back .row{display:flex;gap:8px;flex-wrap:wrap}
+.mini{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:5px 10px;font-size:12.5px;font-weight:600;color:var(--ink)}
+.mini.go{background:var(--c);border-color:transparent;color:var(--on,#fff)}
+.foot{color:var(--muted);font-size:12.5px;line-height:1.55;max-width:80ch}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:16px;background:rgba(5,14,28,.55)}
+.mcard{width:min(620px,100%);max-height:calc(100% - 24px);overflow:auto;border-radius:18px;padding:22px;background:var(--surface);color:var(--ink);
+  box-shadow:1px 1px 0 var(--edge),2px 2px 0 var(--edge),3px 3px 0 var(--edge),4px 4px 0 var(--edge),6px 6px 0 var(--edge-dk),14px 24px 40px rgba(0,0,0,.4)}
+.mcard h2{font-size:22px}
+.mcard>p{color:var(--muted);font-size:13.5px;margin:6px 0 16px}
+fieldset.erow{border:1px solid var(--line);border-radius:12px;margin:0 0 10px;padding:8px 12px 12px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+fieldset.erow legend{font-weight:600;font-size:13.5px;padding:0 6px}
+.erow label{font-size:12px;color:var(--muted);display:grid;gap:4px;min-width:0}
+.erow input{font:inherit;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:7px 8px;min-width:0;width:100%}
+.err{color:var(--sun-ink);font-size:13px;min-height:20px;margin:6px 0}
+.acts{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:8px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media (max-width:960px){
+  .stage{grid-template-columns:minmax(0,1fr);gap:22px}
+  .top{grid-template-columns:minmax(0,1fr)}
+  .next{max-width:none}
+}
+@media (max-width:560px){
+  .sheet{padding:40px 12px 18px;border-radius:18px}
+  .wdh,.grid{gap:7px}
+  .wdh span{font-size:9.5px;padding:5px 0;letter-spacing:.02em}
+  .day{padding:5px;border-radius:9px;box-shadow:inset 0 1px 0 rgba(255,255,255,.45),1px 1px 0 var(--ce),2px 2px 0 var(--ce),3px 3px 0 var(--ce),4px 8px 8px var(--shadow)}
+  .day[aria-pressed="true"]{transform:translate(2px,2px);box-shadow:0 0 0 2px var(--ring),1px 1px 0 var(--ce),2px 2px 0 var(--ce)}
+  .num{font-size:12.5px}
+  .day.today .num{padding:2px 5px;margin:-2px 0 0 -3px}
+  .dots{top:auto;bottom:5px;right:auto;left:5px;gap:3px}
+  .dot{width:7px;height:7px}
+  .lab{display:none}
+  .ramb{left:4px;right:4px;bottom:3px;height:4px}
+  .rings{padding:0 14px}
+  fieldset.erow{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+
+<div class="page">
+  <header class="top">
+    <div>
+      <div class="eyebrow">OSIS SMKN 3 Bantaeng · TP 2026/2027</div>
+      <h1>Kalender Kegiatan OSIS</h1>
+      <p class="sub">Piket gerbang, Green School Movement, RAKER, Cara'Deki, LDK dan Lomba 17 Agustus dalam satu kalender. Pilih tanggal untuk melihat kegiatan hari itu.</p>
+    </div>
+    <button class="next" id="next" type="button" aria-label="Kegiatan berikutnya"></button>
+  </header>
+
+  <nav class="months" id="months" aria-label="Pilih bulan"></nav>
+
+  <main class="stage">
+    <section class="sheet" aria-label="Kalender bulanan">
+      <div class="rings" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="shead">
+        <div class="mtitle"><h2 id="mtitle"></h2><p id="msem"></p></div>
+        <div class="nav">
+          <button class="btn" id="prev" type="button" aria-label="Bulan sebelumnya">&#8592; Sebelumnya</button>
+          <button class="btn" id="today" type="button">Hari ini</button>
+          <button class="btn" id="nextm" type="button" aria-label="Bulan berikutnya">Berikutnya &#8594;</button>
+        </div>
+      </div>
+      <div class="wdh" id="wdh" aria-hidden="true"></div>
+      <div class="grid" id="grid" role="group" aria-label="Tanggal"></div>
+    </section>
+
+    <aside class="side">
+      <section class="panel" aria-live="polite" id="detail"></section>
+      <section class="panel"><h3>Agenda bulan ini</h3><div id="agenda"></div></section>
+      <section class="panel">
+        <h3>Tampilkan</h3>
+        <div class="chipgrp">Kegiatan rutin</div>
+        <div class="chips" id="f-rutin"></div>
+        <div class="chipgrp">Program kerja</div>
+        <div class="chips" id="f-prog"></div>
+        <p class="note" style="margin-top:16px"><button class="btn" id="edit" type="button">Atur tanggal</button></p>
+      </section>
+    </aside>
+  </main>
+
+  <section class="programs" id="programs">
+    <h2>Program kerja OSIS</h2>
+    <p>Ketuk kartu untuk membaca keterangannya, lalu lompat ke tanggalnya di kalender.</p>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <p class="foot">Tanda (±) berarti tanggal perkiraan. Jadwal MPLS mengikuti jadwal dari sekolah, jadi ubah lewat tombol Atur tanggal setelah jadwalnya keluar. Perubahan hanya tersimpan di perangkat ini. Hari libur nasional dan libur semester belum ditandai. Cara'Deki Berbagi juga dilaksanakan sewaktu-waktu jika ada siswa yang membutuhkan bantuan.</p>
+</div>
+
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="mt">
+  <div class="mcard">
+    <h2 id="mt">Atur tanggal kegiatan</h2>
+    <p>Ubah tanggal perkiraan, misalnya setelah jadwal MPLS dari sekolah keluar. Kalender menampilkan 1 November 2026 sampai 31 Agustus 2027.</p>
+    <form id="form" novalidate>
+      <div id="rows"></div>
+      <p class="err" id="err" role="alert"></p>
+      <div class="acts">
+        <button class="btn" type="button" id="reset">Kembalikan semua</button>
+        <button class="btn" type="button" id="cancel">Batal</button>
+        <button class="btn pri" type="submit">Simpan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+var MONTHS=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+var MON3=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+var DAYS=['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
+var WDCOL=['#1D5FA8','#1D5FA8','#1D5FA8','#1D5FA8','#2FA84F','#5A6B80','#D2473F'];
+var RANGE_START='2026-11-01',RANGE_END='2027-08-31';
+var KEY='osis-kalender-tanggal-v1';
+
+var DEFAULTS=[
+ {id:'raker',name:'RAKER (Rapat Kerja)',short:'RAKER',color:'#F28C28',on:'#FFFFFF',start:'2026-11-28',end:'2026-11-28',approx:true,fname:'RAKER'},
+ {id:'porseni',name:"Cara'Deki Competition (PORSENI)",short:'PORSENI',color:'#E03E52',on:'#FFFFFF',start:'2026-12-14',end:'2026-12-19',approx:true,fname:'PORSENI',after:'Setelah ujian akhir semester 1'},
+ {id:'berbagi',name:"Cara'Deki Berbagi (masa Ramadan)",short:'Berbagi',color:'#E85D9C',on:'#FFFFFF',start:'2027-02-08',end:'2027-03-09',approx:true,kind:'period',fname:'Berbagi (Ramadan)',after:'Juga dilaksanakan di luar Ramadan jika ada siswa yang membutuhkan bantuan'},
+ {id:'cup',name:"Cara'Deki Cup 3",short:'CUP 3',color:'#7B4FD6',on:'#FFFFFF',start:'2027-03-22',end:'2027-03-27',approx:true,fname:'Cup 3'},
+ {id:'award',name:"Cara'Deki Award",short:'AWARD',color:'#F2B01E',on:'#4A3500',start:'2027-06-26',end:'2027-06-26',approx:true,fname:'Award',after:'Akhir semester 2. Apresiasi siswa berprestasi, disiplin, dan peduli lingkungan'},
+ {id:'mpls',name:'MPLS (jadwal dari sekolah)',short:'MPLS',color:'#64748B',on:'#FFFFFF',start:'2027-07-12',end:'2027-07-14',approx:true,fname:'MPLS',after:'Awal tahun pelajaran 2027/2028'},
+ {id:'ldk',name:'LDK (Latihan Dasar Kepemimpinan)',short:'LDK',color:'#00A3D9',on:'#FFFFFF',start:'2027-07-23',end:'2027-07-25',approx:true,fname:'LDK',after:'Perekrutan anggota baru OSIS, setelah MPLS'},
+ {id:'lomba',name:'Lomba 17 Agustus',short:'Lomba 17 Agustus',color:'#D62839',on:'#FFFFFF',start:'2027-08-17',end:'2027-08-17',approx:false,fname:'Lomba 17 Agustus',after:'Memperingati HUT ke-82 Kemerdekaan RI'}
+];
+var PROGRAMS=[
+ {n:1,c:'#2F7FE0',name:'Piket Gerbang Pagi',when:'Senin – Jumat, pagi hari',desc:'Pengurus OSIS menjemput siswa di gerbang sekolah setiap pagi.'},
+ {n:2,c:'#17A2A2',name:'Shalat Dhuhur Berjamaah',when:'Kegiatan rutin di sekolah',desc:'Pelaksanaan shalat dhuhur secara berjamaah.'},
+ {n:3,c:'#2FA84F',name:'Green School Movement',when:'Setiap hari Jumat',desc:'Program kerja Green School Movement; dapat juga diisi dengan pelaksanaan shalat dhuha.'},
+ {n:4,c:'#F28C28',name:'RAKER (Rapat Kerja)',when:'Akhir November 2026 (±)',desc:'Rapat kerja pengurus OSIS.',ev:'raker'},
+ {n:5,c:'#E03E52',name:"Cara'Deki Competition (PORSENI)",when:'Desember 2026, setelah ujian akhir semester 1',desc:'Kompetisi Pekan Olahraga dan Seni (PORSENI) SMKN 3 Bantaeng.',ev:'porseni'},
+ {n:6,c:'#E85D9C',name:"Cara'Deki Berbagi",when:'Februari 2027, khususnya bulan Ramadan',desc:'Program berbagi; juga dilaksanakan di luar Ramadan jika ada siswa yang membutuhkan bantuan.',ev:'berbagi'},
+ {n:7,c:'#7B4FD6',name:"Cara'Deki Cup 3",when:'Sekitar Maret 2027 (±)',desc:"Pelaksanaan Cara'Deki Cup ke-3.",ev:'cup'},
+ {n:8,c:'#F2B01E',on:'#4A3500',name:"Cara'Deki Award",when:'Akhir semester 2 (Juni 2027)',desc:'Apresiasi bagi putra-putri SMKN 3 Bantaeng yang berprestasi, disiplin, dan peduli lingkungan.',ev:'award'},
+ {n:9,c:'#00A3D9',name:'LDK (Latihan Dasar Kepemimpinan)',when:'Juli 2027 (±), setelah MPLS',desc:'Perekrutan anggota baru OSIS. Jadwal MPLS mengikuti jadwal dari sekolah.',ev:'ldk'},
+ {n:10,c:'#D62839',name:'Lomba 17 Agustus',when:'Agustus 2027, sekitar 17 Agustus',desc:'Pelaksanaan lomba memperingati Hari Kemerdekaan RI.',ev:'lomba'}
+];
+
+function $(s){return document.querySelector(s)}
+function pad(n){return (n<10?'0':'')+n}
+function iso(y,m,d){return y+'-'+pad(m)+'-'+pad(d)}
+function parts(s){return s.split('-').map(Number)}
+function dow(s){var p=parts(s);return (new Date(p[0],p[1]-1,p[2]).getDay()+6)%7}
+function diff(a,b){var x=parts(a),y=parts(b);return Math.round((Date.UTC(x[0],x[1]-1,x[2])-Date.UTC(y[0],y[1]-1,y[2]))/864e5)}
+function todayIso(){var t=new Date();return iso(t.getFullYear(),t.getMonth()+1,t.getDate())}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function fmtLong(s){var p=parts(s);return DAYS[dow(s)]+', '+p[2]+' '+MONTHS[p[1]-1]+' '+p[0]}
+function fmtRange(a,b){
+  var x=parts(a),y=parts(b);
+  if(a===b)return x[2]+' '+MON3[x[1]-1]+' '+x[0];
+  if(x[0]===y[0]&&x[1]===y[1])return x[2]+' – '+y[2]+' '+MON3[x[1]-1]+' '+x[0];
+  if(x[0]===y[0])return x[2]+' '+MON3[x[1]-1]+' – '+y[2]+' '+MON3[y[1]-1]+' '+x[0];
+  return x[2]+' '+MON3[x[1]-1]+' '+x[0]+' – '+y[2]+' '+MON3[y[1]-1]+' '+y[0];
+}
+
+/* state */
+var over={};
+try{
+  var raw=JSON.parse(localStorage.getItem(KEY)||'{}');
+  if(raw&&typeof raw==='object'){
+    for(var k in raw){var v=raw[k];
+      if(v&&/^\d{4}-\d\d-\d\d$/.test(v.start)&&/^\d{4}-\d\d-\d\d$/.test(v.end)&&v.start<=v.end&&v.start>=RANGE_START&&v.end<=RANGE_END)over[k]={start:v.start,end:v.end};
+    }
+  }
+}catch(e){}
+function saveOver(){try{localStorage.setItem(KEY,JSON.stringify(over))}catch(e){}}
+function events(){return DEFAULTS.map(function(e){return over[e.id]?Object.assign({},e,over[e.id],{approx:false}):e})}
+var off={};
+var MLIST=[];
+for(var yy=2026,mm=11;!(yy===2027&&mm===9);){MLIST.push({y:yy,m:mm});mm++;if(mm>12){mm=1;yy++}}
+var idx=0,sel=RANGE_START;
+var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function monthIndex(d){var p=parts(d);var i=(p[0]-2026)*12+(p[1]-11);return Math.max(0,Math.min(MLIST.length-1,i))}
+function monthEnd(y,m){return iso(y,m,new Date(y,m,0).getDate())}
+function eventsOn(d){return events().filter(function(e){return !off[e.id]&&e.start<=d&&d<=e.end})}
+function eventsIn(y,m){var s=iso(y,m,1),e=monthEnd(y,m);return events().filter(function(ev){return ev.start<=e&&ev.end>=s}).sort(function(a,b){return a.start<b.start?-1:a.start>b.start?1:0})}
+function semLabel(y,m){
+  if(y===2026)return 'Semester 1 (Ganjil) · TP 2026/2027';
+  if(y===2027&&m===7)return 'Pergantian tahun pelajaran · TP 2026/2027 ke 2027/2028';
+  if(y===2027&&m===8)return 'Semester 1 (Ganjil) · TP 2027/2028';
+  return 'Semester 2 (Genap) · TP 2026/2027';
+}
+
+/* weekday header + filters + static */
+$('#wdh').innerHTML=DAYS.map(function(d,i){return '<span style="--w:'+WDCOL[i]+'">'+d.toUpperCase().slice(0,3)+'</span>'}).join('');
+function chip(id,label,color){return '<button type="button" class="chip" data-f="'+id+'" aria-pressed="true" style="--c:'+color+'"><i class="dot"></i>'+esc(label)+'</button>'}
+$('#f-rutin').innerHTML=chip('piket','Piket gerbang','#2F7FE0')+chip('gsm','Green School / Dhuha','#2FA84F');
+$('#f-prog').innerHTML=DEFAULTS.map(function(e){return chip(e.id,e.fname,e.color)}).join('');
+document.querySelector('.side').addEventListener('click',function(ev){
+  var b=ev.target.closest('.chip');if(!b)return;
+  var f=b.dataset.f;off[f]=!off[f];b.setAttribute('aria-pressed',off[f]?'false':'true');
+  renderSheet(false);renderSide();renderTabs();
+});
+
+/* tabs */
+function renderTabs(){
+  $('#months').innerHTML=MLIST.map(function(o,i){
+    var pips=eventsIn(o.y,o.m).filter(function(e){return !off[e.id]}).slice(0,4).map(function(e){return '<s style="--c:'+e.color+'"></s>'}).join('');
+    return '<button type="button" class="tab" data-i="'+i+'"'+(i===idx?' aria-current="true"':'')+'><b>'+MON3[o.m-1]+'</b><span>'+o.y+'</span><i aria-hidden="true">'+pips+'</i></button>';
+  }).join('');
+  var cur=$('#months .tab[aria-current="true"]');
+  if(cur&&cur.scrollIntoView)cur.scrollIntoView({inline:'center',block:'nearest',behavior:reduced?'auto':'smooth'});
+}
+$('#months').addEventListener('click',function(e){var b=e.target.closest('.tab');if(b)go(+b.dataset.i,true)});
+
+/* sheet */
+function renderSheet(animate){
+  var o=MLIST[idx],y=o.y,m=o.m;
+  $('#mtitle').innerHTML=MONTHS[m-1]+' <em>'+y+'</em>';
+  $('#msem').textContent=semLabel(y,m);
+  var lead=(new Date(y,m-1,1).getDay()+6)%7,dim=new Date(y,m,0).getDate(),total=Math.ceil((lead+dim)/7)*7,prevDim=new Date(y,m-1,0).getDate();
+  var td=todayIso(),html='';
+  for(var i=0;i<total;i++){
+    var dn=i-lead+1;
+    if(dn<1||dn>dim){html+='<div class="day out" aria-hidden="true"><span class="num">'+(dn<1?prevDim+dn:dn-dim)+'</span></div>';continue}
+    var d=iso(y,m,dn),col=i%7,evs=eventsOn(d);
+    var blk=evs.filter(function(e){return e.kind!=='period'})[0],per=evs.filter(function(e){return e.kind==='period'})[0];
+    var cls='day wd'+col+(blk?' ev':'')+(per?' ram':'')+(d===td?' today':'');
+    var style=blk?' style="--c:'+blk.color+';--on:'+blk.on+'"':'';
+    var dots='';
+    if(col<5&&!off.piket)dots+='<i class="dot" style="--k:var(--piket)"></i>';
+    if(col===4&&!off.gsm)dots+='<i class="dot" style="--k:var(--gsm)"></i>';
+    var lab=blk?'<span class="lab">'+esc(blk.short)+'</span>':(col===4&&!off.gsm?'<span class="lab gs">Green School</span>':'');
+    var names=evs.map(function(e){return e.name}).join(', ');
+    html+='<button type="button" class="'+cls+'"'+style+' data-d="'+d+'" aria-pressed="'+(d===sel?'true':'false')+'" aria-label="'+fmtLong(d)+(names?': '+esc(names):'')+'"><span class="num">'+dn+'</span><span class="dots">'+dots+'</span>'+lab+(per?'<span class="ramb"></span>':'')+'</button>';
+  }
+  var g=$('#grid');g.innerHTML=html;
+  if(animate&&!reduced){g.classList.remove('turn');void g.offsetWidth;g.classList.add('turn')}
+  $('#prev').disabled=idx===0;$('#nextm').disabled=idx===MLIST.length-1;
+}
+$('#grid').addEventListener('click',function(e){var b=e.target.closest('.day[data-d]');if(b)selectDay(b.dataset.d)});
+$('#grid').addEventListener('keydown',function(e){
+  var step={ArrowLeft:-1,ArrowRight:1,ArrowUp:-7,ArrowDown:7}[e.key];if(!step)return;
+  var all=[].slice.call(document.querySelectorAll('#grid .day[data-d]')),i=all.indexOf(document.activeElement);if(i<0)return;
+  var n=all[i+step];if(n){e.preventDefault();n.focus()}
+});
+
+/* side */
+function renderAgenda(){
+  var o=MLIST[idx],list=eventsIn(o.y,o.m).filter(function(e){return !off[e.id]});
+  $('#agenda').innerHTML=list.length?list.map(function(e){
+    var ap=e.approx?' (±)':'';
+    return '<button type="button" class="ag" data-e="'+e.id+'" style="--c:'+e.color+'"><span class="bar"></span><span><b>'+esc(e.name)+'</b><small>'+fmtRange(e.start,e.end)+ap+(e.after?' · '+esc(e.after):'')+'</small></span></button>';
+  }).join(''):'<p class="empty">Tidak ada agenda khusus bulan ini. Program rutin OSIS tetap berjalan.</p>';
+}
+$('#agenda').addEventListener('click',function(e){var b=e.target.closest('.ag');if(!b)return;var ev=events().filter(function(x){return x.id===b.dataset.e})[0];if(ev){var o=MLIST[idx],s=iso(o.y,o.m,1);selectDay(ev.start<s?s:ev.start)}});
+function renderDetail(){
+  var d=sel,wd=dow(d),evs=eventsOn(d),h='<div class="dtitle"><h3>Detail hari</h3>'+(d===todayIso()?'<span class="tag">Hari ini</span>':'')+'</div><p style="margin:0 0 12px;font:700 18px/1.25 var(--font-d)">'+fmtLong(d)+'</p><ul class="dl">';
+  evs.forEach(function(e){h+='<li class="di" style="--c:'+e.color+'"><i class="sw"></i><div><b>'+esc(e.name)+'</b><small>'+fmtRange(e.start,e.end)+(e.approx?' (±)':'')+(e.after?' · '+esc(e.after):'')+'</small></div></li>'});
+  if(wd<5&&!off.piket)h+='<li class="di" style="--c:var(--piket)"><i class="sw"></i><div><b>Piket gerbang pagi</b><small>Pengurus OSIS menjemput siswa di gerbang</small></div></li>';
+  if(wd===4&&!off.gsm)h+='<li class="di" style="--c:var(--gsm)"><i class="sw"></i><div><b>Green School Movement</b><small>Bisa juga diisi shalat dhuha</small></div></li>';
+  if(wd<5)h+='<li class="di" style="--c:var(--dhuhur)"><i class="sw"></i><div><b>Shalat Dhuhur berjamaah</b><small>Kegiatan rutin di sekolah</small></div></li>';
+  if(!evs.length&&wd>=5)h+='<li class="empty">Tidak ada kegiatan rutin sekolah pada akhir pekan.</li>';
+  $('#detail').innerHTML=h+'</ul>';
+}
+function renderSide(){renderAgenda();renderDetail()}
+
+/* next event */
+function renderNext(){
+  var td=todayIso(),list=events().filter(function(e){return e.end>=td}).sort(function(a,b){return a.start<b.start?-1:a.start>b.start?1:0}),b=$('#next');
+  if(!list.length){b.style.setProperty('--c','#64748B');b.innerHTML='<span class="cube"></span><span><small>Kegiatan berikutnya</small><b>Semua kegiatan TP 2026/2027 sudah lewat</b></span>';b.disabled=true;return}
+  b.disabled=false;
+  var e=list[0],n=diff(e.start,td),when=e.start<=td?'Sedang berlangsung':(n===1?'Besok':n+' hari lagi');
+  b.style.setProperty('--c',e.color);b.dataset.go=e.start;
+  b.innerHTML='<span class="cube"></span><span><small>Kegiatan berikutnya · '+when+'</small><b>'+esc(e.name)+'</b><small>'+fmtRange(e.start,e.end)+(e.approx?' (±)':'')+'</small></span>';
+}
+$('#next').addEventListener('click',function(){var d=this.dataset.go;if(d)jumpTo(d)});
+
+/* navigation */
+function setHash(){try{var o=MLIST[idx];var h=o.y+'-'+pad(o.m);if(location.hash!=='#'+h)location.hash=h}catch(e){}}
+function pickSel(i){
+  var o=MLIST[i],td=todayIso(),s=iso(o.y,o.m,1),e=monthEnd(o.y,o.m);
+  if(td>=s&&td<=e)return td;
+  var list=eventsIn(o.y,o.m);
+  if(list.length)return list[0].start<s?s:list[0].start;
+  return s;
+}
+function go(i,pick){
+  i=Math.max(0,Math.min(MLIST.length-1,i));
+  var changed=i!==idx;idx=i;
+  if(pick||changed){var o=MLIST[i];var s=iso(o.y,o.m,1);if(sel<s||sel>monthEnd(o.y,o.m))sel=pickSel(i);else if(pick)sel=pickSel(i)}
+  renderSheet(changed||pick);renderSide();renderTabs();setHash();
+}
+function selectDay(d){
+  sel=d;
+  var o=MLIST[idx];
+  if(monthIndex(d)!==idx){go(monthIndex(d),false);return}
+  [].forEach.call(document.querySelectorAll('#grid .day[data-d]'),function(b){b.setAttribute('aria-pressed',b.dataset.d===d?'true':'false')});
+  renderDetail();
+}
+function jumpTo(d){
+  idx=monthIndex(d);sel=d;renderSheet(true);renderSide();renderTabs();setHash();
+  var s=document.querySelector('.sheet');if(s&&s.scrollIntoView)s.scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'});
+}
+$('#prev').addEventListener('click',function(){go(idx-1,true)});
+$('#nextm').addEventListener('click',function(){go(idx+1,true)});
+$('#today').addEventListener('click',function(){var t=todayIso();if(t<RANGE_START)jumpTo(RANGE_START);else if(t>RANGE_END)jumpTo(RANGE_END);else jumpTo(t)});
+document.addEventListener('keydown',function(e){
+  if(!$('#modal').hidden)return;
+  var t=e.target&&e.target.tagName;if(t==='INPUT'||t==='TEXTAREA'||t==='SELECT')return;
+  if(e.key==='PageUp'){e.preventDefault();go(idx-1,true)}
+  if(e.key==='PageDown'){e.preventDefault();go(idx+1,true)}
+});
+window.addEventListener('hashchange',function(){var m=/^#(\d{4})-(\d\d)$/.exec(location.hash);if(!m)return;var i=monthIndex(m[1]+'-'+m[2]+'-01');if(i!==idx)go(i,true)});
+
+/* program cards */
+function renderCards(){
+  $('#cards').innerHTML=PROGRAMS.map(function(p,i){
+    var on=p.on||'#FFFFFF';
+    return '<div class="flip" id="pc'+i+'" style="--c:'+p.c+';--on:'+on+'"><div class="flip-in">'+
+      '<button type="button" class="face front" aria-expanded="false" aria-controls="pb'+i+'"><span class="badge">'+p.n+'</span><span><b>'+esc(p.name)+'</b><span class="w">'+esc(p.when)+'</span></span><span class="hint">Ketuk untuk keterangan</span></button>'+
+      '<div class="face back" id="pb'+i+'" inert><p>'+esc(p.desc)+'</p><div class="row">'+(p.ev?'<button type="button" class="mini go" data-ev="'+p.ev+'">Lihat di kalender</button>':'')+'<button type="button" class="mini" data-close="1">Tutup</button></div></div>'+
+    '</div></div>';
+  }).join('');
+}
+function setOpen(card,open){
+  card.classList.toggle('open',open);
+  var f=card.querySelector('.front'),b=card.querySelector('.back');
+  f.setAttribute('aria-expanded',open?'true':'false');f.inert=open;b.inert=!open;
+  if(open){var first=b.querySelector('button');if(first)setTimeout(function(){first.focus()},reduced?0:350)}
+  else setTimeout(function(){f.focus()},reduced?0:50);
+}
+$('#cards').addEventListener('click',function(e){
+  var card=e.target.closest('.flip');if(!card)return;
+  if(e.target.closest('.front')){setOpen(card,true);return}
+  if(e.target.closest('[data-close]')){setOpen(card,false);return}
+  var g=e.target.closest('[data-ev]');
+  if(g){var ev=events().filter(function(x){return x.id===g.dataset.ev})[0];if(ev)jumpTo(ev.start)}
+});
+
+/* edit dates */
+var lastFocus=null;
+function openModal(){
+  lastFocus=document.activeElement;
+  $('#rows').innerHTML=events().map(function(e){
+    return '<fieldset class="erow"><legend>'+esc(e.name)+'</legend><label for="s-'+e.id+'">Mulai<input type="date" id="s-'+e.id+'" value="'+e.start+'" min="'+RANGE_START+'" max="'+RANGE_END+'"></label><label for="e-'+e.id+'">Selesai<input type="date" id="e-'+e.id+'" value="'+e.end+'" min="'+RANGE_START+'" max="'+RANGE_END+'"></label></fieldset>';
+  }).join('');
+  $('#err').textContent='';$('#modal').hidden=false;
+  var f=$('#rows input');if(f)f.focus();
+}
+function closeModal(){$('#modal').hidden=true;if(lastFocus&&lastFocus.focus)lastFocus.focus()}
+$('#edit').addEventListener('click',openModal);
+$('#cancel').addEventListener('click',closeModal);
+$('#modal').addEventListener('mousedown',function(e){if(e.target===this)closeModal()});
+$('#reset').addEventListener('click',function(){over={};saveOver();closeModal();afterEdit()});
+$('#form').addEventListener('submit',function(e){
+  e.preventDefault();
+  var next={};
+  for(var i=0;i<DEFAULTS.length;i++){
+    var d=DEFAULTS[i],s=$('#s-'+d.id).value,en=$('#e-'+d.id).value;
+    if(!s||!en){$('#err').textContent='Isi tanggal mulai dan selesai untuk '+d.name+'.';return}
+    if(en<s){$('#err').textContent='Tanggal selesai '+d.name+' tidak boleh sebelum tanggal mulai.';return}
+    if(s<RANGE_START||en>RANGE_END){$('#err').textContent='Tanggal '+d.name+' harus di antara 1 Nov 2026 dan 31 Agu 2027.';return}
+    if(s!==d.start||en!==d.end)next[d.id]={start:s,end:en};
+  }
+  over=next;saveOver();closeModal();afterEdit();
+});
+document.addEventListener('keydown',function(e){
+  if($('#modal').hidden)return;
+  if(e.key==='Escape'){closeModal();return}
+  if(e.key==='Tab'){
+    var f=[].slice.call($('#modal').querySelectorAll('input,button')).filter(function(x){return !x.disabled});
+    if(!f.length)return;var a=f[0],z=f[f.length-1];
+    if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus()}
+    else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus()}
+  }
+});
+function afterEdit(){renderSheet(false);renderSide();renderTabs();renderNext()}
+
+/* boot */
+function boot(){
+  renderCards();renderNext();
+  var td=todayIso(),m=/^#(\d{4})-(\d\d)$/.exec(location.hash);
+  if(m)idx=monthIndex(m[1]+'-'+m[2]+'-01');
+  else if(td>=RANGE_START&&td<=RANGE_END)idx=monthIndex(td);
+  else idx=td>RANGE_END?MLIST.length-1:0;
+  var o=MLIST[idx],s=iso(o.y,o.m,1),e=monthEnd(o.y,o.m);
+  sel=(td>=s&&td<=e)?td:pickSel(idx);
+  renderSheet(true);renderSide();renderTabs();
+}
+boot();
+})();
+</script>
+
+</body></html>
